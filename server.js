@@ -34,7 +34,7 @@ client.addListener('join', function(channel, who) {
   console.log('%s has joined %s', who, channel);
 });
 client.addListener('part', function(channel, who, reason) {
-  if(who && !_.include(nicknames,who))
+  if(who && !_.include(ignore_nicknames,who))
     client.say(channel, 'Bye ' + who + ' !');
   console.log('%s has left %s: %s', who, channel, reason);
 });
