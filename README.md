@@ -15,6 +15,18 @@ npm config set christina:server "irc.freenode.net"
 npm config set christina:channel "#cristina"
 ```
 
+## Use
+
+To start as daemon, just type
+```
+npm start
+```
+
+To start without detaching, just type
+```
+npm run-script start-test
+```
+
 ## Modules
 
 ## LICENSE
