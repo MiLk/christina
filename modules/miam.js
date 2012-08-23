@@ -1,6 +1,6 @@
 (function(){
 
-  exports.name = 'dance';
+  exports.name = 'miam';
 
   exports.match = (function(client, from, to, message) {
     if(message.match(/miam/)) {

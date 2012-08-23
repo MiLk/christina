@@ -1,5 +1,10 @@
 # Christina
 
+## Dependencies
+
+* Debian/Ubuntu: `apt-get install libexpat1-dev`
+* Centos/Red Hat: `yum install expat-devel`
+
 ## Install
 
 ```
