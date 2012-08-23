@@ -43,6 +43,8 @@
           else
             client.say(to, 'No results.');
         }); 
+      }).on('error', function(e) {
+        console.log("Got error on url "+url+" : " + e.message);
       }); 
     }     
 });

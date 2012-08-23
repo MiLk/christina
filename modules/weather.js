@@ -28,6 +28,8 @@
           else
             client.say(to, 'Meteo introuvable.');
         });
+      }).on('error', function(e) {
+        console.log("Got error: " + e.message);
       });
     }
   });
