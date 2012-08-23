@@ -2,7 +2,7 @@ var irc = require('irc')
   , _ = require('underscore')._
   , fs = require('fs');
 var client = new irc.Client(process.env.npm_package_config_server, process.env.npm_package_config_username, {
-  debug: true,
+  debug: false,
   channels: [process.env.npm_package_config_channel],
   userName: process.env.npm_package_config_username,
   realName: 'Christina Node.js IRC Bot',
@@ -26,16 +26,20 @@ fs.readdir('./modules', function(err, files){
   });
 });
 
+var ignore_nicknames = [process.env.npm_package_config_username,"GithubBot"];
+
 client.addListener('join', function(channel, who) {
-    if(who != process.env.npm_package_config_username)
-      client.say(channel, 'Hello ' + who + ' !');
-    console.log('%s has joined %s', who, channel);
+  if(who && !_.include(ignore_nicknames,who))
+    client.say(channel, 'Hello ' + who + ' !');
+  console.log('%s has joined %s', who, channel);
 });
 client.addListener('part', function(channel, who, reason) {
+  if(who && !_.include(nicknames,who))
     client.say(channel, 'Bye ' + who + ' !');
-    console.log('%s has left %s: %s', who, channel, reason);
+  console.log('%s has left %s: %s', who, channel, reason);
 });
 client.addListener('kick', function(channel, who, by, reason) {
-  client.say(channel, who + ' NO RAGE PLX !!!');
+  if(who && !_.include(ignore_nicknames,who))
+    client.say(channel, who + ' NO RAGE PLX !!!');
   console.log('%s was kicked from %s by %s: %s', who, channel, by, reason);
 });
