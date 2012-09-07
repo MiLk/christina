@@ -1,32 +1,69 @@
 (function() {
 
-  var http = require('http'),
-      xml2json = require('xml2json');
+  var http = require('http')
+    , FeedParser = require('feedparser')
+    , parser = new FeedParser()
+    , util = require('util');
 
   exports.name = 'weather';
 
   exports.match = (function(client, from, to, message) {
-    var match = message.match(/(meteo|weather) (.*)/);
+    var match = message.match(/(meteo|weather|meteo\+|weather\+) (.*)/);
     if(match)
     {
-      http.get('http://www.google.com/ig/api?weather='+match[2].replace(' ','%20')+'&hl=fr', function(res) {
+      util.log(util.inspect(match,true,4,true));
+      // http://developer.yahoo.com/geo/placefinder/guide/index.html
+      http.get('http://where.yahooapis.com/geocode?flags=J&locale=fr_fr&count=1&q='+match[2].replace(' ','%20'), function(res) {
         var data = '';
         res.on('data', function(chunk) {
           data += chunk;
         }).on('error', function(err) {
           console.log('Search error: ' + err);
-        });;
+        });
         res.on('end', function(){
-          var obj;
-          try {
-            obj = xml2json.toJson(data);
-          } catch(err) { client.say(to, 'Meteo introuvable.'); console.log(err); return; }
-          obj = JSON.parse(obj);
-          obj = obj.xml_api_reply.weather;
-          if(!obj.problem_cause)
-            client.say(to, 'Meteo du jour à '+obj.forecast_information.city.data+' : ' + obj.current_conditions.condition.data + ' - ' + obj.current_conditions.temp_c.data + '°C - ' + obj.current_conditions.humidity.data + ' - ' + obj.current_conditions.wind_condition.data + '');
+          var obj = JSON.parse(data);
+          if(obj.ResultSet.Results && obj.ResultSet.Results.length >= 1)
+          {
+            var woeid = obj.ResultSet.Results[0].woeid
+              , city = obj.ResultSet.Results[0].city
+              , country = obj.ResultSet.Results[0].country;
+
+            parser.parseUrl('http://weather.yahooapis.com/forecastrss?w='+woeid+'&u=c', {}, function(err, out, items){
+              if(err) client.say(to, 'Meteo introuvable.');
+              else if(items[0]['summary'].match(/Invalid/))
+              {
+                client.say(to, items[0]['title']);
+              }
+              else {
+                util.log(util.inspect(items, true, 4, true));
+                var item = items[0];
+                var astronomy = out['yweather:astronomy']['@']
+                  , title = item['title']
+                  , atmosphere = out['yweather:atmosphere']['@']
+                  , wind = out['yweather:wind']['@']
+                  , link = out['link'];
+                link = link.substring(link.indexOf('*')+1);
+
+                var tomorrow = item['yweather:forecast'][0]['@']
+                  , aftertomorrow = item['yweather:forecast'][1]['@']
+                  , today = item['yweather:condition']['@'];
+
+              if(match[1] == 'meteo' || match[1] == 'weather') {
+                /*client.say(to, title + 
+                  ' (Humidité : '+atmosphere.humidity+'%)'+
+                  ' '+astronomy.sunrise+' - '+astronomy.sunset);*/
+                client.say(to, today['text']+' '+today['temp']+'°C - '+today['date'] + ' - ' + title);
+                /*client.say(to, tomorrow['text']+' '+tomorrow['low']+'°C/'+tomorrow['high']+'°C - '+
+                  tomorrow['day']+' '+tomorrow['date']);*/
+              }
+              else
+                client.say(to, aftertomorrow['text']+' '+aftertomorrow['low']+'°C/'+aftertomorrow['high']+'°C - '+
+                  aftertomorrow['day']+' '+aftertomorrow['date'] + ' - ' + title);
+              }
+            });
+          }
           else
-            client.say(to, 'Meteo introuvable.');
+            client.say(to, 'Emplacement introuvable.');
         });
       }).on('error', function(e) {
         console.log("Got error: " + e.message);
