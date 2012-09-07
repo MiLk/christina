@@ -12,19 +12,22 @@ client.addListener('error', function(message) {
 });
 
 var mods = [];
-fs.readdir('./modules', function(err, files){
-  if(err) { console.log(err); return; }
-  _.each(files,function(file) {
-    console.log('Load module ' + file);
-    mods.push(require('./modules/'+file));
-  });
-  client.addListener('message', function (from,to, message) {
-    //console.log(from + ' => ' + to + ': ' + message);
-    _.each(mods,function(mod){
-      mod.match(client,from,to,message);
+var reload = (function(){
+  fs.readdir('./modules', function(err, files){
+    if(err) { console.log(err); return; }
+    _.each(files,function(file) {
+      console.log('Load module ' + file);
+      mods.push(require('./modules/'+file));
+    });
+    client.addListener('message', function (from,to, message) {
+      //console.log(from + ' => ' + to + ': ' + message);
+      _.each(mods,function(mod){
+        mod.match(client,from,to,message);
+      });
     });
   });
-});
+})();
+
 
 var ignore_nicknames = [process.env.npm_package_config_username,"GithubBot"];
 
