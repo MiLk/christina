@@ -11,7 +11,6 @@
     var match = message.match(/(meteo|weather|meteo\+|weather\+) (.*)/);
     if(match)
     {
-      util.log(util.inspect(match,true,4,true));
       // http://developer.yahoo.com/geo/placefinder/guide/index.html
       http.get('http://where.yahooapis.com/geocode?flags=J&locale=fr_fr&count=1&q='+match[2].replace(' ','%20'), function(res) {
         var data = '';
@@ -35,7 +34,6 @@
                 client.say(to, items[0]['title']);
               }
               else {
-                util.log(util.inspect(items, true, 4, true));
                 var item = items[0];
                 var astronomy = out['yweather:astronomy']['@']
                   , title = item['title']
