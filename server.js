@@ -28,8 +28,18 @@ var reload = (function(){
       });
     });
   });
+  fs.exists('./private_modules', function(exists) {
+    if(!exists) return;
+    fs.readdir('./private_modules', function(err, files){
+      if(err) { console.log(err); return; }
+      _.each(files,function(file) {
+        console.log('Load private module ' + file);
+        var mod = require('./private_modules/'+file);
+        mod.load(client);
+      });
+    });
+  });
 })();
-
 
 var ignore_nicknames = [process.env.npm_package_config_username,"GithubBot"];
 
