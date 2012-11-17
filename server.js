@@ -20,7 +20,6 @@ var reload = (function(){
       mods.push(require('./modules/'+file));
     });
     client.addListener('message', function (from,to, message) {
-      //console.log(from + ' => ' + to + ': ' + message);
       _.each(mods,function(mod){
         mod.match(client,from,to,message);
       });
@@ -45,4 +44,23 @@ client.addListener('kick', function(channel, who, by, reason) {
   if(who && !_.include(ignore_nicknames,who))
     client.say(channel, who + ' NO RAGE PLX !!!');
   console.log('%s was kicked from %s by %s: %s', who, channel, by, reason);
+});
+client.addListener('invite', function(channel, from, message) {
+  client.join(channel);
+  console.log(from + ' invite me to join '+channel);
+});
+client.addListener('ping', function(data) {
+  console.log('PING received. '+data);
+});
+client.addListener('ctcp', function(from,to,text,type) {
+  console.log('CTCP from '+from+' to '+to+': '+text+' ('+type+')');
+  var parts = text.split(' ');
+  if(type == 'privmsg') {
+    switch(parts[0]) {
+      case 'TIME':
+        var date = new Date();
+        client.ctcp(from,'notice',date.toDateString() + ' ' + date.toLocaleTimeString());
+        break;
+    }
+  }
 });
