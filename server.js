@@ -3,6 +3,9 @@ var irc = require('irc')
   , fs = require('fs');
 var client = new irc.Client(process.env.npm_package_config_server, process.env.npm_package_config_username, {
   debug: false,
+  showErrors: true,
+  autoRejoin: true,
+  autoConnect: true,
   channels: [process.env.npm_package_config_channel],
   userName: process.env.npm_package_config_username,
   realName: 'Christina Node.js IRC Bot',

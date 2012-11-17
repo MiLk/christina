@@ -22,7 +22,7 @@
   },
   "scripts" : {
     "start-test" : "node server.js",
-    "start" : "forever start server.js" 
+    "start" : "forever -a -l christina.log start server.js" 
   },
   "config" : {
     "server" : "irc.freenode.net",
