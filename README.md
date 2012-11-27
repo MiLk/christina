@@ -17,7 +17,7 @@ npm install
 
 ```
 npm config set christina:server "irc.freenode.net"
-npm config set christina:channel "#cristina"
+npm config set christina:channel "#christina"
 ```
 
 ## Use
