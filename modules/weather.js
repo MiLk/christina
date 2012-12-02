@@ -1,8 +1,7 @@
 (function() {
 
   var http = require('http')
-    , FeedParser = require('feedparser')
-    , parser = new FeedParser()
+    , parser = require('feedparser')
     , util = require('util');
 
   exports.name = 'weather';
