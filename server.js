@@ -16,6 +16,13 @@ client.addListener('error', function(message) {
     } else
       console.error('ERROR: %s: %s', message.command, message.args.join(' '));
 });
+client.addListener('notice', function (nick, to, text, message) {
+  if(nick == 'NickServ') {
+    if(text.match(/Password accepted/)) {
+      client.emit('password_accepted');
+    }
+  }
+});
 
 var mods = [];
 var reload = (function(){
