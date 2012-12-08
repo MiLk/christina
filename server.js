@@ -11,7 +11,10 @@ var client = new irc.Client(process.env.npm_package_config_server, process.env.n
   realName: 'Christina Node.js IRC Bot',
 });
 client.addListener('error', function(message) {
-    console.error('ERROR: %s: %s', message.command, message.args.join(' '));
+    if(message.command == 'err_notregistered' || message.rawCommand == 451) {
+      client.say('NickServ','IDENTIFY '+process.env.npm_package_config_password);
+    } else
+      console.error('ERROR: %s: %s', message.command, message.args.join(' '));
 });
 
 var mods = [];

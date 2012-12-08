@@ -27,7 +27,8 @@
   "config" : {
     "server" : "irc.freenode.net",
     "channel" : "#christina",
-    "username" : "Christina"
+    "username" : "Christina",
+    "password" : "christina"
   },
   "author": "Emilien Kenler <hello@emilienkenler.com> (http://www.emilienkenler.com)",
   "license": "BSD"
